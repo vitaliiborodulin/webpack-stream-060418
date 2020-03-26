@@ -4,40 +4,42 @@ let MiniCssExtractPlugin = require('mini-css-extract-plugin');
 let conf = {
     entry: './src/index.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'main.js',
+        path: path.resolve(__dirname, './dist/'),
+        filename: 'script.js',
         publicPath: 'dist/'
     },
     devServer: {
         overlay: true
     },
+    plugins: [
+        new MiniCssExtractPlugin({
+            filename: 'styles.css'
+        })
+    ],
     module: {
         rules: [
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                // exclude: '/node_modules/'
+                exclude: '/node_modules/',
+                options: {
+                    presets: ['@babel/preset-env']
+                }
             },
             {
                 test: /\.css$/,
                 use: [MiniCssExtractPlugin.loader, 'css-loader'],
             }
         ]
-    },
-    plugins: [
-        new MiniCssExtractPlugin({
-            filename: '[name].css',
-            chunkFilename: '[id].css',
-          }),
-      ]
+    }
 };
 
 module.exports = (env, options) => {
     let production = options.mode === 'production';
 
     conf.devtool = production
-                    // ? 'sourcemap'
                     ? false
+                    // ? 'sourcemap'
                     : 'eval-sourcemap';
 
     return conf;
